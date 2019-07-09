@@ -1,5 +1,5 @@
 # Matlab_geometry
-Matlab code for analyzing geometry
+Matlab code for analyzing MRI knee geometry
 
 This is a collection of Matlab functions for converting Osirix/Horos regions of interest (ROIs) comma separated values (CSV) files
 using the polygon digitizing tool on MRI images into triangular surface meshes.  Note that the functions require a specific naming
