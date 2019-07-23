@@ -38,8 +38,8 @@ function [davg,dstd,dmin,dmax,daavg,dif,xyz1,tri1,xyz2,tri2] = ...
 %                 in the XY plane.
 %
 %                 3.  The M-files in_tri2d.m, meshbnd4.m, mk_tri4.m,
-%                 plane_fit.m and tri_fix2.m must be in the current
-%                 path or directory.
+%                 plane_fit.m, sl_info.m and tri_fix2.m must be in the
+%                 current path or directory.
 %
 %         09-Jul-2019 * Mack Gardner-Morse
 %
@@ -124,13 +124,41 @@ davg = mean(dif2);
 daavg = mean(abs(dif2));
 %
 if iplt
+%
   figure(hf);
   orient landscape;
+  view(3);
+  hold on;
+%
   hm = trimesh(tri1,xyz1(:,1),xyz1(:,2),xyz1(:,3),'EdgeColor', ...
                [0.75 0.75 0.75],'FaceColor','none','LineWidth',0.5);
-%  set(hm,'EdgeAlpha',0.5);
+  set(hm,'EdgeAlpha',0.5);
+%
   axis equal;
-  hold on;
+%
+  [ns,~,isx] = sl_info(dat1);
+  for isl = 1:ns
+     id = isx(isl)+1:isx(isl+1);
+     xyz = xyz1(id,:);
+     h1 = plot3(xyz(:,1),xyz(:,2),xyz(:,3),'k.-','LineWidth',0.5, ...
+                'MarkerSize',7,'Color',[0.7 0.7 0.7]);
+%
+     ht1 = text(xyz(1,1),xyz(1,2),xyz(1,3),int2str(isl),'FontSize', ...
+                11,'Color',[0.7 0.7 0.7],'FontWeight','bold');
+%
+  end
+%
+  [ns,~,isx] = sl_info(dat2);
+  for isl = 1:ns
+     id = isx(isl)+1:isx(isl+1);
+     xyz = xyz2(id,:);
+     h2 = plot3(xyz(:,1),xyz(:,2),xyz(:,3),'k.-','LineWidth',0.5, ...
+                'MarkerSize',7,'Color',[0.5 1 0.5]);
+%
+     ht2 = text(xyz(1,1),xyz(1,2),xyz(1,3),int2str(isl),'FontSize', ...
+                11,'Color',[0.5 1 0.5],'FontWeight','bold');
+%
+  end
 %
   idn = find(dif<0);
   idp = find(dif>0);
