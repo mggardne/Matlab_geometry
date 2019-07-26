@@ -130,9 +130,9 @@ if iplt
   view(3);
   hold on;
 %
-  hm = trimesh(tri1,xyz1(:,1),xyz1(:,2),xyz1(:,3),'EdgeColor', ...
-               [0.75 0.75 0.75],'FaceColor','none','LineWidth',0.5);
-  set(hm,'EdgeAlpha',0.5);
+%   hm = trimesh(tri1,xyz1(:,1),xyz1(:,2),xyz1(:,3),'EdgeColor', ...
+%                [0.7 0.7 0.7],'FaceColor','none','LineWidth',0.5);
+%   set(hm,'EdgeAlpha',0.5);
 %
   axis equal;
 %
@@ -140,11 +140,11 @@ if iplt
   for isl = 1:ns
      id = isx(isl)+1:isx(isl+1);
      xyz = xyz1(id,:);
-     h1 = plot3(xyz(:,1),xyz(:,2),xyz(:,3),'k.-','LineWidth',0.5, ...
-                'MarkerSize',7,'Color',[0.7 0.7 0.7]);
+%      h1 = plot3(xyz(:,1),xyz(:,2),xyz(:,3),'k.-','LineWidth',0.5, ...
+%                 'MarkerSize',7,'Color',[0 0.7 0]);
 %
-     ht1 = text(xyz(1,1),xyz(1,2),xyz(1,3),int2str(isl),'FontSize', ...
-                11,'Color',[0.7 0.7 0.7],'FontWeight','bold');
+%      ht1 = text(xyz(1,1),xyz(1,2),xyz(1,3),int2str(isl),'FontSize', ...
+%                 11,'Color',[0.7 0.7 0.7],'FontWeight','bold');
 %
   end
 %
@@ -153,10 +153,10 @@ if iplt
      id = isx(isl)+1:isx(isl+1);
      xyz = xyz2(id,:);
      h2 = plot3(xyz(:,1),xyz(:,2),xyz(:,3),'k.-','LineWidth',0.5, ...
-                'MarkerSize',7,'Color',[0.5 1 0.5]);
+                'MarkerSize',7,'Color',[0 0 0]);
 %
      ht2 = text(xyz(1,1),xyz(1,2),xyz(1,3),int2str(isl),'FontSize', ...
-                11,'Color',[0.5 1 0.5],'FontWeight','bold');
+                11,'Color',[0 0 0],'FontWeight','bold');
 %
   end
 %
@@ -165,12 +165,12 @@ if iplt
 %
   plot3([xyz2(idn,1) xyz2(idn,1)]',[xyz2(idn,2) ...
         xyz2(idn,2)]',[z2(idn) xyz2(idn,3)]','r-', ...
-        'Color',[0.5 0 0],'LineWidth',1);
+        'Color',[0.6 0 0],'LineWidth',4);
 %  
   plot3([xyz2(idp,1) xyz2(idp,1)]',[xyz2(idp,2) ...
         xyz2(idp,2)]',[z2(idp) xyz2(idp,3)]','b-', ...
-        'Color',[0 0 0.5],'LineWidth',1);
-%  
+        'Color',[0 0 0.6],'LineWidth',4);
+ 
   plot3([xyz2(idmn,1); xyz2(idmn,1)],[xyz2(idmn,2); ...
         xyz2(idmn,2)],[z2(idmn); xyz2(idmn,3)],'r-', ...
         'LineWidth',2);
