@@ -13,7 +13,7 @@
 %             2.  See tibia_cs8.m for more information on the tibia
 %             coordinate system.
 %
-%             3. The Matlab M-files fix_pts.m, li_clos.m, mk_tri4.m,
+%             3. The Matlab M-files fix_pts.m, li_clos.m, mk_tri6.m,
 %             plane_fit.m, rd_roi4.m, rotxyz.m, tibia_cs8.m,
 %             tri_area.m, tri_fix2.m and tri_norm.m must be in the
 %             current directory or path.
@@ -26,11 +26,13 @@
 %             system and the coordinate transformation matrix and
 %             origin are saved in the directory of the knee data in a
 %             Matlab MAT file, kid_tibiaCS.mat, where kid is the knee
-%             identifier (??xxx_R/L, ?? are the initials, xxx is the
-%             knee number and either R or L for the right or left
-%             knee).
+%             identifier (xxx_R/L, xxx is the knee number and either R
+%             or L for the right or left knee).
 %
-%             6.  This is an updated version of tibias07b.m.
+%             6.  The aspect ratio of the tibia width to the tibia
+%             height is out to a CSV file, kid_AspectRatio.csv.
+%
+%             7.  This is an updated version of tibias07b.m.
 %
 %     07-May-2019 * Mack Gardner-Morse
 %
@@ -51,8 +53,8 @@ mnam = '_tibiaCS.mat';
 %
 tclrs = [0 0 0.7; 0 0.5 0];            % Deep blue and dark green
 %
-tcmpt = ['Lateral'
-         'Medial '];
+tcmpt = ['lateral'
+         'medial '];
 %
 % Get Sagittal Bone CSV File Name
 %
@@ -130,8 +132,8 @@ fclose(fid);
 roi = rd_roi4(fullfile(pnam,fnam));
 %
 roinams = upper(char(roi.name));
-idc(2) = strmatch('MTCS',roinams,'exact');  % Medial compartment
-idc(1) = strmatch('LTCS',roinams,'exact');  % Lateral compartment
+idc(2) = find(strcmp('MTCS',cellstr(roinams)));  % Medial compartment
+idc(1) = find(strcmp('LTCS',cellstr(roinams)));  % Lateral compartment
 %
 % Raw Data Figure
 %
@@ -174,11 +176,7 @@ for l = 1:2
    for n = 1:nsl1
       xyz = dat1{n};
       if isempty(xyz)
-        if l==1
-          cmprt = 'lateral';
-        else
-          cmprt = 'medial';
-        end
+        cmprt = deblank(tcmpt(l,:));
         error([' *** ERROR in tibias08b:  No coordinates for ', ...
                'slice ' int2str(n) ' in ' cmprt ' compartment!']);
       end
@@ -226,37 +224,29 @@ for l = 1:2
 %
 % Get Surface Triangulation
 %
-   tri = mk_tri4(datt);
+   trit = mk_tri6(datt);
+   xyzt = cell2mat(datt);
+   trit = tri_fix2(trit,xyzt); %#ok<NASGU>
 %
 % Save Data into Compartment Specific Variables
 %
-   if l==1
-     datl = datt;
-     tril = tri;
-   else
-     datm = datt;
-     trim = tri;
-   end
+   eval(['dat' tcmpt(l,1) ' = datt;']);
+   eval(['tri' tcmpt(l,1) ' = trit;']);
+   eval(['xyz' tcmpt(l,1) ' = xyzt;']);
 %
-   clear datt tri xyzt;
+   clear datt trit xyzt;
 %
 end
 %
 % Save Plots
 %
-print('-f2','-dpsc2','-r300','-bestfit','-append',psnam);
-print('-f3','-dpsc2','-r300','-bestfit','-append',psnam);
+print(hf2,'-dpsc2','-r300','-bestfit','-append',psnam);
+print(hf3,'-dpsc2','-r300','-bestfit','-append',psnam);
 %
 % Plot Transformed Bone Surface Data
 % 
 hf4 = figure;
 orient landscape;
-%
-xyzl = cell2mat(datl);
-xyzm = cell2mat(datm);
-%
-tril = tri_fix2(tril,xyzl);
-trim = tri_fix2(trim,xyzm);
 %
 trisurf(tril,xyzl(:,1),xyzl(:,2),xyzl(:,3),'FaceColor','interp', ...
         'EdgeColor',tclrs(1,:),'LineWidth',1);
