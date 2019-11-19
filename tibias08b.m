@@ -102,9 +102,13 @@ orient tall;
 view(3);
 hold on;
 %
-% Get Tibial Coordinate System
+% Get Tibial Coordinate System, Proximal Tibia Outline (PTO) and Aspect
+% Ratio from the PTO
 %
-[xyzc,xyzr,aspect,widt,height] = tibia_cs8([pnam fnama],ileg,true);
+% NOTE:  PTO is in the tibia coordinate system.
+%
+[xyzc,xyzr,aspect,widt,height,xyzpto] = tibia_cs8([pnam fnama],ileg, ...
+                                                  true);
 %
 % Finish Plot
 %
@@ -268,6 +272,6 @@ mnam = [kid mnam];
 mnam = fullfile(pnam,mnam);
 %
 save(mnam,'datl','datm','kid','ileg','tril','trim','xyzc','xyzr', ...
-          'xyzl','xyzm');
+          'xyzl','xyzm','xyzpto');
 %
 return

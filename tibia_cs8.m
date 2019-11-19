@@ -1,4 +1,5 @@
-function [xyzo,xyzax,aspect,widt,height] = tibia_cs8(faxial,leg,iplt)
+function [xyzo,xyzax,aspect,widt,height,xyzpt] = tibia_cs8(faxial, ...
+                                                           leg,iplt);
 %TIBIA_CS8 Reads Osirix regions-of-interest comma separated files to
 %          calculate tibia based coordinate systems (CS).
 %
@@ -396,6 +397,10 @@ minheight = xyzc1(3);
 maxheight = xyzc2(3);
 height = maxheight-minheight;
 aspect = widt/height;
+%
+% Proximal Tibia Outline in Tibia Coordinate System
+%
+xyzpt = xyzp(1:end-1,:);
 %
 if nargout==0
   fprintf(1,'\n Aspect ratio = %5.3f\n\n');
