@@ -44,6 +44,10 @@
 tol = 0.2;              % Minimum distance between distinct points
 iflag = true;           % Print message if duplicates found
 %
+% MRI Slice Thickness
+%
+sl_thick = 0.3125;      % MRI slice thickness in mm
+%
 % Output PS and MAT File Names
 %
 psnam = '_tibias08b.ps';
@@ -123,7 +127,19 @@ psnam = fullfile(pnam,psnam);
 %
 print('-dpsc2','-r300','-bestfit',psnam);
 %
-% Output Aspect Ratio to a CSV File
+% Output Aspect Ratio to Screen and a CSV File
+%
+diff_ht = widt-height;  % Width and height should be equal
+nchange_sl = round(diff/sl_thick);     % Number of slices to move
+%
+fprintf(1,'\n\n Aspect Ratio = %.3f\n',aspect)
+if nchange_sl>0
+  fprintf(1,'   Go Distally %.0f Slices\n\n',abs(nchange_sl));
+elseif nchange_sl<0
+  fprintf(1,'   Go Proximally %.0f Slices\n\n',abs(nchange_sl));
+else
+  fprintf(1,'   Aspect Ratio is Close!\n\n');
+end
 %
 fid = fopen(fullfile(pnam,[kid '_AspectRatio.csv']),'w');
 %
