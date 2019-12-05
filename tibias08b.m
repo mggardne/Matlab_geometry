@@ -58,9 +58,11 @@ tcmpt = ['lateral'
 %
 % Get Sagittal Bone CSV File Name
 %
-[fnam,pnam] = uigetfile({'*_SAG_TIB*.csv', ...
-                        'Sagittal tibial bone CSV files'}, ...
-                        'Please Select Tibial Sagittal Bone CSV Files');
+if ~exist('fnam','var')
+  [fnam,pnam] = uigetfile({'*_SAG_TIB*.csv', ...
+                  'Sagittal tibial bone CSV files'}, ...
+                  'Please Select Tibial Sagittal Bone CSV Files');
+end
 %
 if isequal(fnam,0)
   return;
@@ -107,8 +109,8 @@ hold on;
 %
 % NOTE:  PTO is in the tibia coordinate system.
 %
-[xyzc,xyzr,aspect,widt,height,xyzpto] = tibia_cs8([pnam fnama],ileg, ...
-                                                  true);
+[xyzc,xyzr,aspect,widt,height,xyzpto] = tibia_cs8(fullfile(pnam,fnama), ...
+                                                  ileg,true);
 %
 % Finish Plot
 %

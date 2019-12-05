@@ -1,34 +1,39 @@
 %#######################################################################
 %
-%                    * TIBIAS 08 Cartilage Program *
+%              * TIBIAS 08 Cartilage Reliability Program *
 %
 %          Program to read, transform to the bony tibia coordinate
 %     system and plot digitized cartilage points from a tibia.  Plots
-%     medial and lateral compartment cartilage data for user selected
-%     knee.  Plots both coronal and sagittal data.
+%     lateral compartment cartilage data for user selected knee.  Plots
+%     both coronal and sagittal data.  Modified version of tibias08c.m
+%     for reliability study.
 %
-%     NOTES:  1.  The names of the regions of interest (ROIs) must
+%     NOTES:  1.  Reliability data must be in a subdirectory of the
+%             knee data folder.
+%
+%             2.  The names of the regions of interest (ROIs) must
 %             follow a specific convention.
 %
-%             2. The Matlab M-files fix_pts.m, li_clos.m, mk_tri6.m,
+%             3. The Matlab M-files fix_pts.m, li_clos.m, mk_tri6.m,
 %             plane_fit.m, rd_roi4.m, rotxyz.m, tri_area.m, tri_fix2.m
 %             and tri_norm.m must be in the current directory or path.
 %
-%             3.  The tibia coordinate system with the coordinate
+%             4.  The tibia coordinate system with the coordinate
 %             transformation matrix and origin are read from the
 %             directory of the knee data from the Matlab MAT file,
 %             kid_tibiaCS.mat, where kid is the knee identifier
 %             (xxx_R/L, xxx is the knee number and either R or L
 %             for the right or left knee).
 %
-%             4.  This M-file outputs a PostScript file,
-%             kid_tibias08c.ps, with plots of the tibial cartilage into
-%             the directory of the knee data.
+%             5.  This M-file outputs a PostScript file,
+%             kid_tibias08cr.ps, with plots of the tibial cartilage
+%             into the reliability subdirectory of the knee data.
 %
-%             5.  The transformed data and mesh are saved in a Matlab
-%             MAT file kid_tibiaCart.mat.
+%             6.  The transformed data and mesh are saved in a Matlab
+%             MAT file kid_tibiaCartR.mat into the reliability
+%             subdirectory.
 %
-%     27-Sep-2019 * Mack Gardner-Morse
+%     05-Dec-2019 * Mack Gardner-Morse
 %
 
 %#######################################################################
@@ -41,8 +46,8 @@ iflag = true;           % Print message if duplicates found
 % Tibial Coordinate and Output PS and MAT File Names
 %
 csnam = '_tibiaCS.mat';                % Tibia coordinate system file
-psnam = '_tibias08c.ps';               % Output PS file
-mnam = '_tibiaCart.mat';               % Output MAT file
+psnam = '_tibias08cr.ps';              % Output PS file
+mnam = '_tibiaCartR.mat';              % Output MAT file
 %
 % Digitization Planes (Coronal and Sagittal)
 %
@@ -77,11 +82,11 @@ fnamc = [kid '_CORAR_TIB*.csv'];
 fnamc = dir(fullfile(pnam,fnamc));
 %
 if isempty(fnamc)
-  error(' *** ERROR in tibias08c:  Unable to find coronal file!');
+  error(' *** ERROR in tibias08cr:  Unable to find coronal file!');
 end
 %
 if size(fnamc,1)~=1
-  error([' *** ERROR in tibias08c:  Unable to find an unique ', ....
+  error([' *** ERROR in tibias08cr:  Unable to find an unique ', ....
         'coronal file!']);
 end
 %
@@ -93,7 +98,11 @@ ileg = strcmpi(kid(5),'R');
 %
 % Get Tibial Coordinate System
 %
-tcs = load(fullfile(pnam,[kid csnam]),'xyzc','xyzr');
+idp = find(pnam(1:end-1)==filesep);    % Skip any file separator at end of path
+idp = idp(end);         % Remove subdirectory from path
+pnamb = pnam(1:idp);    % Path to bone data
+%
+tcs = load(fullfile(pnamb,[kid csnam]),'xyzc','xyzr');
 xyzc = tcs.xyzc;        % Origin
 xyzr = tcs.xyzr;        % Rotation matrix
 %
@@ -131,8 +140,8 @@ for k = 1:2             % Coronal = 1 and sagittal = 2
    xlabel('X (mm)','FontSize',12,'FontWeight','bold');
    ylabel('Y (mm)','FontSize',12,'FontWeight','bold');
    zlabel('Z (mm)','FontSize',12,'FontWeight','bold');
-   title({[kid ' - MRI CS']; dtxt; ['Blue - Lateral, Green - ', ...
-         'Medial']},'FontSize',16,'FontWeight','bold', ...
+   title({[kid ' - MRI CS']; dtxt; 'Lateral Only'}, ...
+         'FontSize',16,'FontWeight','bold', ...
          'Interpreter','none');
 %
 % Transformed Data Figure
@@ -149,7 +158,8 @@ for k = 1:2             % Coronal = 1 and sagittal = 2
 %
 % Loop through Compartments (Lateral [l==1] and Medial [l==2])
 %
-   for l = 1:2          % Lateral = 1 and medial = 2
+   for l = 1:1          % Lateral only
+%    for l = 1:2          % Lateral = 1 and medial = 2
 %
 % Get Data
 %
@@ -241,14 +251,14 @@ for k = 1:2             % Coronal = 1 and sagittal = 2
      trisurf(trilc,xyzlc(:,1),xyzlc(:,2),xyzlc(:,3),'FaceColor', ...
              'interp','EdgeColor',tclrs(1,:),'LineWidth',1);
      hold on;
-     trisurf(trimc,xyzmc(:,1),xyzmc(:,2),xyzmc(:,3),'FaceColor', ...
-             'interp','EdgeColor',tclrs(2,:),'LineWidth',1);
+%      trisurf(trimc,xyzmc(:,1),xyzmc(:,2),xyzmc(:,3),'FaceColor', ...
+%              'interp','EdgeColor',tclrs(2,:),'LineWidth',1);
    else
      trisurf(trils,xyzls(:,1),xyzls(:,2),xyzls(:,3),'FaceColor', ...
              'interp','EdgeColor',tclrs(1,:),'LineWidth',1);
      hold on;
-     trisurf(trims,xyzms(:,1),xyzms(:,2),xyzms(:,3),'FaceColor', ...
-             'interp','EdgeColor',tclrs(2,:),'LineWidth',1);
+%      trisurf(trims,xyzms(:,1),xyzms(:,2),xyzms(:,3),'FaceColor', ...
+%              'interp','EdgeColor',tclrs(2,:),'LineWidth',1);
    end
    axis equal;
    xlabel('AP (mm)','FontSize',12,'FontWeight','bold');
@@ -266,7 +276,6 @@ end
 mnam = [kid mnam];
 mnam = fullfile(pnam,mnam);
 %
-save(mnam,'datlc','datls','datmc','datms','kid','ileg','trilc', ...
-     'trils','trimc','trims','xyzlc','xyzls','xyzmc','xyzms');
+save(mnam,'datlc','datls','kid','ileg','trilc','trils','xyzlc','xyzls');
 %
 return
